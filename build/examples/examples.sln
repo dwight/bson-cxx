@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example1", "..\example1\example1.vcxproj", "{A8D196E5-1AF0-44F6-8BF3-C16E600BB9DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{927726FC-3D45-4452-A41F-0954A4858467}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\README.md = ..\..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8D196E5-1AF0-44F6-8BF3-C16E600BB9DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A8D196E5-1AF0-44F6-8BF3-C16E600BB9DB}.Debug|Win32.Build.0 = Debug|Win32
+		{A8D196E5-1AF0-44F6-8BF3-C16E600BB9DB}.Release|Win32.ActiveCfg = Release|Win32
+		{A8D196E5-1AF0-44F6-8BF3-C16E600BB9DB}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

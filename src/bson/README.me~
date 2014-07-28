@@ -1,0 +1,19 @@
+This is a (currently experimental) standalone BSON implementation for C++.
+
+The code is adapted from the MongoDB C++ driver.  It is effectively forked and 
+will be quite different, especially over time.  All mongodb references are 
+eliminated, as the goal here was to create a "pure bson" library that is as 
+simple as reasonably possible.
+
+The namespace is (currently) _bson.  "bson" was not used as it is anticipated
+there may be a more official bson library from someone else at some point, 
+and don't want to have a namespace collision.
+
+The BSONObj class has been simplified and all container/smart pointer functionality
+eliminated.  It is renamed bsonobj to make it more clear that this is "different"
+than the old mongo::BSONObj class.
+
+All third party dependencies are eliminated, everything you need should be in 
+this one directory.  To avoid a dependency upon boost, the current version uses 
+the C++11 unique_ptr class.  If you want to use older C++, just include the appropriate
+boost header, or, refactor to auto_ptr.
