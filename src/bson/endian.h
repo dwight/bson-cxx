@@ -5,6 +5,7 @@
 namespace _bson {
 
     // no PDP or anything like that at the moment, just big/little.
+    //const bool big = true;
     const bool big = ((unsigned short&)"a") >= 0x8000;
 
     // todo add right intrinsics for gcc

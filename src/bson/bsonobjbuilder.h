@@ -50,7 +50,7 @@ namespace _bson {
             _b.appendNum((char)EOO);
             char *data = _b.buf() + _offset;
             int size = _b.len() - _offset;
-            *((int*)data) = size;
+            *((int*)data) = endian_int(size);
             return data;
         }
 

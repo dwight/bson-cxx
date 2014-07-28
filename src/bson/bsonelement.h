@@ -173,7 +173,7 @@ namespace _bson {
             @see Bool(), trueValue()
         */
         Date_t date() const {
-            return *reinterpret_cast< const Date_t* >( value() );
+            return Date_t(endian_ll(*reinterpret_cast<const long long*>(value())));
         }
 
         /** Convert the value to boolean, regardless of its type, in a javascript-like fashion
@@ -188,11 +188,13 @@ namespace _bson {
         bool isNumber() const;
 
         /** Return double value for this field. MUST be NumberDouble type. */
-        double _numberDouble() const {return (reinterpret_cast< const PackedDouble* >( value() ))->d; }
+        double _numberDouble() const {
+            return endian_d((reinterpret_cast<const PackedDouble*>(value()))->d);
+        }
         /** Return int value for this field. MUST be NumberInt type. */
-        int _numberInt() const {return *reinterpret_cast< const int* >( value() ); }
+        int _numberInt() const { return readInt(value()); }
         /** Return long long value for this field. MUST be NumberLong type. */
-        long long _numberLong() const {return *reinterpret_cast< const long long* >( value() ); }
+        long long _numberLong() const {return endian_ll(*reinterpret_cast< const long long* >( value() )); }
 
         /** Retrieve int value for the element safely.  Zero returned if not a number. */
         int numberInt() const;
@@ -231,7 +233,7 @@ namespace _bson {
             @return string size including terminating null
         */
         int valuestrsize() const {
-            return *reinterpret_cast< const int* >( value() );
+            return readInt( value() );
         }
 
         // for objects the size *includes* the size of the size field
@@ -398,7 +400,7 @@ namespace _bson {
         }
 
         unsigned long long timestampValue() const {
-            return reinterpret_cast<const unsigned long long*>( value() )[0];
+            return endian_ll(reinterpret_cast<const unsigned long long*>( value() )[0]);
         }
 
         const char * dbrefNS() const {
@@ -409,7 +411,7 @@ namespace _bson {
         const _bson::OID& dbrefOID() const {
             uassert( 10064 ,  "not a dbref" , type() == DBRef );
             const char * start = value();
-            start += 4 + *reinterpret_cast< const int* >( start );
+            start += 4 + *reinterpret_cast< const int* >( start );  // todo endian
             return *reinterpret_cast< const _bson::OID* >( start );
         }
 
@@ -432,7 +434,14 @@ namespace _bson {
                 fieldNameSize_ = -1;
                 if ( maxLen != -1 ) {
                     int size = (int) strnlen( fieldName(), maxLen - 1 );
+
+                    int a = size;
+                    if (a == -1) {
+                        ;
+                    }
+
                     uassert( 10333 ,  "Invalid field name", size != -1 );
+
                     fieldNameSize_ = size + 1;
                 }
             }
@@ -493,11 +502,11 @@ namespace _bson {
         // NOTE Behavior changes must be replicated in Value::coerceToBool().
         switch( type() ) {
         case NumberLong:
-            return *reinterpret_cast< const long long* >( value() ) != 0;
+            return _numberLong() != 0;
         case NumberDouble:
-            return (reinterpret_cast < const PackedDouble* >(value ()))->d != 0;
+            return _numberDouble() != 0;
         case NumberInt:
-            return *reinterpret_cast< const int* >( value() ) != 0;
+            return _numberInt() != 0;
         case _bson::Bool:
             return boolean();
         case EOO:

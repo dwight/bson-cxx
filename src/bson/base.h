@@ -14,7 +14,7 @@ namespace _bson {
     };
 
     inline void uasserted(unsigned, std::string) { assert(false); }
-    inline void uassert(unsigned, const char *, bool x) {
+    inline void uassert(unsigned a, const char *str, bool x) {
         assert(x);
     }
     inline void uassert(unsigned, std::string, bool x) {
