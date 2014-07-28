@@ -89,6 +89,9 @@ namespace _bson {
         char buf[SZ];
     };
 
+    /** note this builder, when using its appendNum() methods, creates a buffer in 
+        bson byte order (little endian order), automatically.
+    */
     template< class Allocator >
     class _BufBuilder {
         // non-copyable, non-assignable
@@ -152,25 +155,25 @@ namespace _bson {
             *((char*)grow(sizeof(char))) = j;
         }
         void appendNum(short j) {
-            *((short*)grow(sizeof(short))) = j;
+            *((short*)grow(sizeof(short))) = endian_short(j);
         }
         void appendNum(int j) {
-            *((int*)grow(sizeof(int))) = j;
+            *((int*)grow(sizeof(int))) = endian_int(j);
         }
         void appendNum(unsigned j) {
-            *((unsigned*)grow(sizeof(unsigned))) = j;
+            *((unsigned*)grow(sizeof(unsigned))) = endian(j);
         }
         void appendNum(bool j) {
-            *((bool*)grow(sizeof(bool))) = j;
+            *((char*)grow(sizeof(char))) = j ? 1 : 0;
         }
         void appendNum(double j) {
-            (reinterpret_cast< PackedDouble* >(grow(sizeof(double))))->d = j;
+            (reinterpret_cast<PackedDouble*>(grow(sizeof(double))))->d = endian_d(j);
         }
         void appendNum(long long j) {
-            *((long long*)grow(sizeof(long long))) = j;
+            *((long long*)grow(sizeof(long long))) = endian_ll(j);
         }
         void appendNum(unsigned long long j) {
-            *((unsigned long long*)grow(sizeof(unsigned long long))) = j;
+            *((unsigned long long*)grow(sizeof(unsigned long long))) = endian_ll(j);
         }
 
         void appendBuf(const void *src, size_t len) {

@@ -179,7 +179,9 @@ namespace _bson {
             return _objdata;
         }
         /** @return total size of the BSON object in bytes */
-        int objsize() const { return *(reinterpret_cast<const int*>(objdata())); }
+        int objsize() const {
+            return readInt(objdata());
+        }
 
         /** performs a cursory check on the object's size only. */
         bool isValid() const;

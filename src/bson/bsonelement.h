@@ -22,6 +22,7 @@
 #include "oid.h"
 #include "cstdint.h"
 #include "builder.h"
+#include "endian.h"
 
 namespace _bson {
     class bsonobj;
@@ -235,7 +236,7 @@ namespace _bson {
 
         // for objects the size *includes* the size of the size field
         size_t objsize() const {
-            return static_cast< const size_t >( *reinterpret_cast< const uint32_t* >( value() ) );
+            return static_cast< const size_t >( readInt( value() ) );
         }
 
         /** Get a string's value.  Also gives you start of the real data for an embedded object.

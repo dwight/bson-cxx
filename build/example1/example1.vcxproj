@@ -97,6 +97,7 @@
     <ClInclude Include="..\..\src\bson\bsontypes.h" />
     <ClInclude Include="..\..\src\bson\builder.h" />
     <ClInclude Include="..\..\src\bson\cstdint.h" />
+    <ClInclude Include="..\..\src\bson\endian.h" />
     <ClInclude Include="..\..\src\bson\errorcodes.h" />
     <ClInclude Include="..\..\src\bson\float_utils.h" />
     <ClInclude Include="..\..\src\bson\hex.h" />
