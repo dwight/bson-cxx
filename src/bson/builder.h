@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <string>
 #include "string_data.h"
+#include "endian.h"
 
 namespace _bson {
     /* Accessing unaligned doubles on ARM generates an alignment trap and aborts with SIGBUS on Linux.
@@ -327,7 +328,11 @@ namespace _bson {
        template <typename T>
         StringBuilderImpl& SBNUM(T val,int maxSize,const char *macro)  {
             int prev = _buf.l;
+            #if defined(_WIN32)
             int z = _snprintf_s( _buf.grow(maxSize) , maxSize , _TRUNCATE , macro , (val) );
+            #else
+            int z = snprintf( _buf.grow(maxSize) , maxSize , macro , (val) );
+            #endif
             verify( z >= 0 );
             verify( z < maxSize );
             _buf.l = prev + z;

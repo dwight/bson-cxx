@@ -242,7 +242,7 @@ namespace {
                 *result = -std::numeric_limits<double>::infinity();
                 return Status::OK();
             }
-#endif  // defined(_WIN32)
+#endif
 
             return Status(ErrorCodes::FailedToParse, "Did not consume whole number.");
         }

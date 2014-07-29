@@ -9,8 +9,9 @@ namespace _bson {
     class MsgAssertionException : public std::exception {
     public:
         MsgAssertionException(unsigned, std::string _s) : s(_s) {}
+        ~MsgAssertionException() throw() { }
         const std::string s;
-        virtual const char * what() const { return s.c_str();  }
+        virtual const char * what() const throw() { return s.c_str();  }
     };
 
     inline void uasserted(unsigned, std::string) { assert(false); }

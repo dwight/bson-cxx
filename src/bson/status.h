@@ -22,6 +22,7 @@ namespace _bson {
         ErrorCodes code() const { return _code; }
 
         std::string codeString() const { return s;  }
+        std::string toString() const { return s;  }
         unsigned reason() const { return 0;  }
     private:
         ErrorCodes _code;
