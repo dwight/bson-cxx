@@ -41,6 +41,8 @@ namespace _bson {
         BufBuilder _buf;
         int _offset;
         bool _doneCalled;
+
+    public:
         char* _done() {
             if (_doneCalled)
                 return _b.buf() + _offset;
@@ -53,8 +55,6 @@ namespace _bson {
             *((int*)data) = endian_int(size);
             return data;
         }
-
-
 
     public:
         /** @param initsize this is just a hint as to the final size of the object */
@@ -804,9 +804,7 @@ namespace _bson {
         * @return owned bsonobj
         */
         bsonobj obj() {
-            doneFast();
-            char *h = _b.buf();
-            return bsonobj(h);
+            return bsonobj(_done());
         }
 
         /** Fetch the object we have built.
@@ -816,11 +814,6 @@ namespace _bson {
         */
         bsonobj done() {
             return bsonobj(_done());
-        }
-
-        // Like 'done' above, but does not construct a bsonobj to return to the caller.
-        void doneFast() {
-            (void)_done();
         }
 
         /** Peek at what is in the builder, but leave the builder ready for more appends.
@@ -949,10 +942,6 @@ namespace _bson {
         */
         BSONArray arr() { return BSONArray(_b.obj()); }
         bsonobj obj() { return _b.obj(); }
-
-        bsonobj done() { return _b.done(); }
-
-        void doneFast() { _b.doneFast(); }
 
         BSONArrayBuilder& append(const StringData& name, int n) {
             fill(name);

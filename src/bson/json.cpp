@@ -687,15 +687,19 @@ namespace _bson {
         }
         bsonobjbuilder subBuilder(builder.subarrayStart(fieldName));
         if (!peekToken(RBRACKET)) {
-            do {
+            while( 1 ) {
                 Status ret = value(builder.numStr(index), subBuilder);
                 if (ret != Status::OK()) {
                     return ret;
                 }
                 index++;
-            } while (readToken(COMMA));
+                if (!peekToken(COMMA)) {
+                    break;
+                }
+                readToken(COMMA);
+            };
         }
-        subBuilder.obj();
+        subBuilder._done();
         if (!readToken(RBRACKET)) {
             return parseError("Expected ']' or ','");
         }
