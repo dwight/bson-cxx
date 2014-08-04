@@ -1,4 +1,4 @@
-// bsonobjiterator.h
+// bson objiterator.h
 
 /*    Copyright 2009 10gen Inc.
  *

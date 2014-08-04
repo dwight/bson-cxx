@@ -50,7 +50,21 @@ namespace _bson {
         type()
     */
     class bsonelement {
+        int _valuesize() const;
+        int sizeOld() const;
     public:
+        /** Used when we already know the field name length, to avoid
+                a redundant strlen() calculation.
+                    This can be made private when find_research.h is merged in.
+            */
+        explicit bsonelement(int fnSize, const char *d) :
+        data(d), fieldNameSize_(fnSize), totalSize(-1)
+        {
+            if (eoo()) {
+                totalSize = 1;                
+            }
+        }        
+
         /** These functions, which start with a capital letter, throw a MsgAssertionException if the
             element is not of the required type. Example:
 

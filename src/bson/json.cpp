@@ -92,7 +92,15 @@ namespace _bson {
 
     Status JParse::value(const StringData& fieldName, bsonobjbuilder& builder) {
         MONGO_JSON_DEBUG("fieldName: " << fieldName);
-        char ch = peek();
+    again:
+        char ch;
+        while( 1 ) {
+            ch = peek();
+            if (ch != ' ')
+                break;
+            getc();
+        }
+
         if (peekToken(LBRACE)) {
             Status ret = object(fieldName, builder);
             if (ret != Status::OK()) {
@@ -203,6 +211,11 @@ namespace _bson {
         }
         else if (ch == '-' && readToken("-Infinity")) {
             builder.append(fieldName, -std::numeric_limits<double>::infinity());
+        }
+        else if (strchr(CONTROL, ch) != 0) {
+            // whitespace
+            getc();
+            goto again;
         }
         else {
             Status ret = number(fieldName, builder);
