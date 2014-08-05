@@ -307,7 +307,7 @@ namespace _bson {
         }
 
         /** Get the embedded object this element holds. */
-        bsonobj embeddedObject() const;
+        bsonobj object() const;
 
         /* uasserts if not an object */
         bsonobj embeddedObjectUserCheck() const;
@@ -394,8 +394,8 @@ namespace _bson {
             }
         }
 
-        /** True if this element can be a bsonobj */
-        bool isABSONObj() const {
+        /** True if this element is of object or array type */
+        bool isObject() const {
             switch( type() ) {
             case Object:
             case _bson::Array:

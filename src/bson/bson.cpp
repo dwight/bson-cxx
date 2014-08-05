@@ -317,10 +317,10 @@ namespace _bson {
             s << (boolean() ? "true" : "false");
             break;
         case Object:
-            embeddedObject().toString(s, false, full, depth + 1);
+            object().toString(s, false, full, depth + 1);
             break;
         case _bson::Array:
-            embeddedObject().toString(s, true, full, depth + 1);
+            object().toString(s, true, full, depth + 1);
             break;
         case Undefined:
             s << "undefined";
@@ -443,7 +443,7 @@ namespace _bson {
     bsonobj bsonobj::getObjectField(const StringData& name) const {
         bsonelement e = getField(name);
         BSONType t = e.type();
-        return t == Object || t == Array ? e.embeddedObject() : bsonobj();
+        return t == Object || t == Array ? e.object() : bsonobj();
     }
     bsonobj::bsonobj() {
         static char p[] = { /*size*/5, 0, 0, 0, /*eoo*/0 };

@@ -106,7 +106,7 @@ dodouble:
             }
         case Object:
         case Array:
-            return l.embeddedObject().woCompare( r.embeddedObject() );
+            return l.object().woCompare( r.object() );
         case DBRef: {
             int lsz = l.valuesize();
             int rsz = r.valuesize();
@@ -167,7 +167,7 @@ dodouble:
     }
     */
     inline bsonobj bsonelement::embeddedObjectUserCheck() const {
-        if ( (isABSONObj()) )
+        if ( (isObject()) )
             return bsonobj(value());
         std::stringstream ss;
         ss << "invalid parameter: expected an object (" << fieldName() << ")";
@@ -175,8 +175,8 @@ dodouble:
         return bsonobj(); // never reachable
     }
 
-    inline bsonobj bsonelement::embeddedObject() const {
-        verify( isABSONObj() );
+    inline bsonobj bsonelement::object() const {
+        verify( isObject() );
         return bsonobj(value());
     }
 
