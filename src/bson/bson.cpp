@@ -72,7 +72,7 @@ namespace _bson {
                 else {
                     int len = *((int *)p);
                     int extra = (z & 0x7f);
-                    len = extra;
+                    len += extra;
                     q(log() << "will skip:" << len << " extra was:" << extra << endl;)
                     p += len;
                 }
