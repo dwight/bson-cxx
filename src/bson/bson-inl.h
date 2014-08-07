@@ -263,27 +263,6 @@ dodouble:
     }
     */
     /* add all the fields from the object specified to this object if they don't exist */
-    #if 0
-    inline bsonobjbuilder& bsonobjbuilder::appendElementsUnique(bsonobj x) {
-        std::set<std::string> have;
-        {
-            bsonobjiterator i = iterator();
-            while ( i.more() )
-                have.insert( i.next().fieldName() );
-        }
-        
-        bsonobjiterator it(x);
-        while ( it.more() ) {
-            bsonelement e = it.next();
-            if ( have.count( e.fieldName() ) )
-                continue;
-            append(e);
-        }
-        return *this;
-    }
-
-#endif
-
     inline bool bsonobj::isValid() const {
         int x = objsize();
         return x > 0 && x <= BSONObjMaxInternalSize;
@@ -376,11 +355,6 @@ dodouble:
 #endif
 
 #if 0
-    inline bsonobjiterator bsonobjbuilder::iterator() const {
-        const char * s = _b.buf() + _offset;
-        const char * e = _b.buf() + _b.len();
-        return bsonobjiterator(s, e);
-    }
     inline bool bsonobjbuilder::hasField( const StringData& name ) const {
         bsonobjiterator i = iterator();
         while ( i.more() )

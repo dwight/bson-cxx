@@ -458,4 +458,30 @@ namespace _bson {
         }
         return bsonelement();
     }*/
+
+    inline bsonobjiterator bsonobjbuilder::iterator() const {
+        const char * s = _b.buf() + _offset;
+        const char * e = _b.buf() + _b.len();
+        return bsonobjiterator(s, e);
+    }
+
+    bsonobjbuilder& bsonobjbuilder::appendElementsUnique(bsonobj x) {
+        std::set<std::string> have;
+        {
+            bsonobjiterator i = iterator();
+            while (i.more())
+                have.insert(i.next().fieldName());
+        }
+
+        bsonobjiterator it(x);
+        while (it.more()) {
+            bsonelement e = it.next();
+            if (have.count(e.fieldName()))
+                continue;
+            append(e);
+        }
+        return *this;
+    }
+
+
 }
