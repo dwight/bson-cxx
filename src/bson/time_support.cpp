@@ -206,14 +206,14 @@ namespace {
                 if (tzStr.size() != 1) {
                     StringBuilder sb;
                     sb << "Found trailing characters in time zone specifier:  " << tzStr;
-                    return Status(ErrorCodes::BadValue, sb.str());
+                    return Status(BadValue, sb.str());
                 }
             }
             else if (tzStr[0] == '+' || tzStr[0] == '-') {
                 if (tzStr.size() != 5 || !isOnlyDigits(tzStr.substr(1, 4))) {
                     StringBuilder sb;
                     sb << "Time zone adjustment string should be four digits:  " << tzStr;
-                    return Status(ErrorCodes::BadValue, sb.str());
+                    return Status(BadValue, sb.str());
                 }
 
                 // Parse the hours component of the time zone offset.  Note that
@@ -228,7 +228,7 @@ namespace {
                 if (tzAdjHours < -23 || tzAdjHours > 23) {
                     StringBuilder sb;
                     sb << "Time zone hours adjustment out of range:  " << tzAdjHours;
-                    return Status(ErrorCodes::BadValue, sb.str());
+                    return Status(BadValue, sb.str());
                 }
 
                 StringData tzMinutesStr = tzStr.substr(3, 2);
@@ -241,7 +241,7 @@ namespace {
                 if (tzAdjMinutes < 0 || tzAdjMinutes > 59) {
                     StringBuilder sb;
                     sb << "Time zone minutes adjustment out of range:  " << tzAdjMinutes;
-                    return Status(ErrorCodes::BadValue, sb.str());
+                    return Status(BadValue, sb.str());
                 }
 
                 // Use the sign that parseNumberFromStringWithBase found to determine if we need to
@@ -261,11 +261,11 @@ namespace {
                 sb << "Invalid time zone string:  \"" << tzStr
                    << "\".  Found invalid character at the beginning of time "
                    << "zone specifier: " << tzStr[0];
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
         }
         else {
-            return Status(ErrorCodes::BadValue, "Missing required time zone specifier for date");
+            return Status(BadValue, "Missing required time zone specifier for date");
         }
 
         return Status::OK();
@@ -281,7 +281,7 @@ namespace {
             if (millisStr.size() > 3 || !isOnlyDigits(millisStr)) {
                 StringBuilder sb;
                 sb << "Millisecond string should be at most three digits:  " << millisStr;
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
 
             Status status = parseNumberFromStringWithBase(millisStr, 10, resultMillis);
@@ -304,7 +304,7 @@ namespace {
             if (*resultMillis < 0 || *resultMillis > 1000) {
                 StringBuilder sb;
                 sb << "Millisecond out of range:  " << *resultMillis;
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
         }
 
@@ -326,7 +326,7 @@ namespace {
         if (yearStr.size() != 4 || !isOnlyDigits(yearStr)) {
             StringBuilder sb;
             sb << "Year string should be four digits:  " << yearStr;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         Status status = parseNumberFromStringWithBase(yearStr, 10, &resultTm->tm_year);
@@ -337,7 +337,7 @@ namespace {
         if (resultTm->tm_year < 1970 || resultTm->tm_year > 9999) {
             StringBuilder sb;
             sb << "Year out of range:  " << resultTm->tm_year;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         resultTm->tm_year -= 1900;
@@ -346,7 +346,7 @@ namespace {
         if (monthStr.size() != 2 || !isOnlyDigits(monthStr)) {
             StringBuilder sb;
             sb << "Month string should be two digits:  " << monthStr;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         status = parseNumberFromStringWithBase(monthStr, 10, &resultTm->tm_mon);
@@ -357,7 +357,7 @@ namespace {
         if (resultTm->tm_mon < 1 || resultTm->tm_mon > 12) {
             StringBuilder sb;
             sb << "Month out of range:  " << resultTm->tm_mon;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         resultTm->tm_mon -= 1;
@@ -366,7 +366,7 @@ namespace {
         if (dayStr.size() != 2 || !isOnlyDigits(dayStr)) {
             StringBuilder sb;
             sb << "Day string should be two digits:  " << dayStr;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         status = parseNumberFromStringWithBase(dayStr, 10, &resultTm->tm_mday);
@@ -377,14 +377,14 @@ namespace {
         if (resultTm->tm_mday < 1 || resultTm->tm_mday > 31) {
             StringBuilder sb;
             sb << "Day out of range:  " << resultTm->tm_mday;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         // Parse hour
         if (hourStr.size() != 2 || !isOnlyDigits(hourStr)) {
             StringBuilder sb;
             sb << "Hour string should be two digits:  " << hourStr;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         status = parseNumberFromStringWithBase(hourStr, 10, &resultTm->tm_hour);
@@ -395,14 +395,14 @@ namespace {
         if (resultTm->tm_hour < 0 || resultTm->tm_hour > 23) {
             StringBuilder sb;
             sb << "Hour out of range:  " << resultTm->tm_hour;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         // Parse minute
         if (minStr.size() != 2 || !isOnlyDigits(minStr)) {
             StringBuilder sb;
             sb << "Minute string should be two digits:  " << minStr;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         status = parseNumberFromStringWithBase(minStr, 10, &resultTm->tm_min);
@@ -413,7 +413,7 @@ namespace {
         if (resultTm->tm_min < 0 || resultTm->tm_min > 59) {
             StringBuilder sb;
             sb << "Minute out of range:  " << resultTm->tm_min;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         // Parse second if it exists
@@ -424,7 +424,7 @@ namespace {
         if (secStr.size() != 2 || !isOnlyDigits(secStr)) {
             StringBuilder sb;
             sb << "Second string should be two digits:  " << secStr;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         status = parseNumberFromStringWithBase(secStr, 10, &resultTm->tm_sec);
@@ -435,7 +435,7 @@ namespace {
         if (resultTm->tm_sec < 0 || resultTm->tm_sec > 59) {
             StringBuilder sb;
             sb << "Second out of range:  " << resultTm->tm_sec;
-            return Status(ErrorCodes::BadValue, sb.str());
+            return Status(BadValue, sb.str());
         }
 
         return Status::OK();
@@ -469,7 +469,7 @@ namespace {
                 StringBuilder sb;
                 sb << "Invalid date:  " << dateString << ".  Ends with \"" << dateString[minEnd]
                    << "\" character";
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
 
             secStr = getNextToken(dateString, ".+-Z", minEnd + 1, &secEnd);
@@ -478,7 +478,7 @@ namespace {
             if (secStr.empty()) {
                 StringBuilder sb;
                 sb << "Missing seconds in date: " << dateString;
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
         }
 
@@ -490,7 +490,7 @@ namespace {
                 StringBuilder sb;
                 sb << "Invalid date:  " << dateString << ".  Ends with \"" << dateString[secEnd]
                    << "\" character";
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
 
             millisStr = getNextToken(dateString, "+-Z", secEnd + 1, &millisEnd);
@@ -499,7 +499,7 @@ namespace {
             if (millisStr.empty()) {
                 StringBuilder sb;
                 sb << "Missing seconds in date: " << dateString;
-                return Status(ErrorCodes::BadValue, sb.str());
+                return Status(BadValue, sb.str());
             }
         }
 

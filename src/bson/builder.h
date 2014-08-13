@@ -293,7 +293,11 @@ namespace _bson {
             const int prev = _buf.l;
             const int maxSize = 32; 
             char * start = _buf.grow( maxSize );
+            #if defined(_WIN32)
             int z = _snprintf_s( start , maxSize, maxSize , "%.16g" , x );
+            #else
+            int z = snprintf( start , maxSize , "%.16g" , x );
+            #endif
             verify( z >= 0 );
             verify( z < maxSize );
             _buf.l = prev + z;

@@ -83,7 +83,7 @@ namespace _bson {
         ossmsg << msg.toString();
         ossmsg << " line:" << line;
         ossmsg << ", file_offset:" << offset() << ", doc_number:" << doc_number;
-        return Status(ErrorCodes::FailedToParse, ossmsg.str());
+        return Status(FailedToParse, ossmsg.str());
     }
 
     Status JParse::err() { 

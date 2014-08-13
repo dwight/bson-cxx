@@ -33,6 +33,8 @@ namespace _bson {
 #pragma warning( disable : 4355 )
 #endif
 
+    class bsonobjiterator;
+
     /** Utility for creating a bsonobj.
     See also the BSON() and BSON_ARRAY() macros.
     */
@@ -429,7 +431,7 @@ namespace _bson {
             _b.appendStr(fieldName);
             _b.appendBuf((void*)objdata, size );
             return *this;
-        }
+        }*/
 
         /** add header for a new subobject and return bufbuilder for writing to
          *  the subobject's body
@@ -450,14 +452,14 @@ namespace _bson {
 
         /** add a subobject as a member with type Array.  Thus arr object should have "0", "1", ...
             style fields in it.
-            *//*
-        bsonobjbuilder& appendArray(const StringData& fieldName, const bsonobj &subObj) {
+            */
+        /*bsonobjbuilder& appendArray(const StringData& fieldName, const bsonobj &subObj) {
             _b.appendNum((char) Array);
             _b.appendStr(fieldName);
             _b.appendBuf((void *) subObj.objdata(), subObj.objsize());
             return *this;
-        }
-        */
+        }*/
+        
 #if 0
         /** Append a boolean element */
         bsonobjbuilder& appendBool(const StringData& fieldName, int val) {

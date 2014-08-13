@@ -115,13 +115,13 @@ namespace _bson {
         typedef ::std::numeric_limits<NumberType> limits;
 
         if (base == 1 || base < 0 || base > 36)
-            return Status(ErrorCodes::BadValue, "Invalid base");
+            return Status(BadValue, "Invalid base");
 
         bool isNegative = false;
         StringData str = _extractBase(_extractSign(stringValue, &isNegative), base, &base);
 
         if (str.empty())
-            return Status(ErrorCodes::FailedToParse, "No digits");
+            return Status(FailedToParse, "No digits");
 
         NumberType n(0);
         if (isNegative) {
@@ -129,7 +129,7 @@ namespace _bson {
                 for (size_t i = 0; i < str.size(); ++i) {
                     NumberType digitValue = NumberType(_digitValue(str[i]));
                     if (int(digitValue) >= base)
-                        return Status(ErrorCodes::FailedToParse, "Bad digit");
+                        return Status(FailedToParse, "Bad digit");
 
 // MSVC: warning C4146: unary minus operator applied to unsigned type, result still unsigned
 // This code is statically known to be dead when NumberType is unsigned, so the warning is not real
@@ -139,7 +139,7 @@ namespace _bson {
                         ((limits::min() - NumberType(n * base)) > -digitValue)) {
 #pragma warning(pop)
 
-                        return Status(ErrorCodes::FailedToParse, "Underflow");
+                        return Status(FailedToParse, "Underflow");
                     }
 
                     n *= NumberType(base);
@@ -147,18 +147,18 @@ namespace _bson {
                 }
             }
             else {
-                return Status(ErrorCodes::FailedToParse, "Negative value");
+                return Status(FailedToParse, "Negative value");
             }
         }
         else {
             for (size_t i = 0; i < str.size(); ++i) {
                 NumberType digitValue = NumberType(_digitValue(str[i]));
                 if (int(digitValue) >= base)
-                    return Status(ErrorCodes::FailedToParse, "Bad digit");
+                    return Status(FailedToParse, "Bad digit");
                 if ((NumberType(limits::max() / base) < n) ||
                     (NumberType(limits::max() - n * base) < digitValue)) {
 
-                    return Status(ErrorCodes::FailedToParse, "Overflow");
+                    return Status(FailedToParse, "Overflow");
                 }
 
                 n *= NumberType(base);
@@ -209,14 +209,14 @@ namespace {
                                                  int base,
                                                  double* result) {
         if (base != 0) {
-            return Status(ErrorCodes::BadValue,
+            return Status(BadValue,
                           "Must pass 0 as base to parseNumberFromStringWithBase<double>.");
         }
         if (stringValue.empty())
-            return Status(ErrorCodes::FailedToParse, "Empty string");
+            return Status(FailedToParse, "Empty string");
 
         if (isspace(stringValue[0]))
-            return Status(ErrorCodes::FailedToParse, "Leading whitespace");
+            return Status(FailedToParse, "Leading whitespace");
 
         std::string str = stringValue.toString();
         const char* cStr = str.c_str();
@@ -244,10 +244,10 @@ namespace {
             }
 #endif
 
-            return Status(ErrorCodes::FailedToParse, "Did not consume whole number.");
+            return Status(FailedToParse, "Did not consume whole number.");
         }
         if (actualErrno == ERANGE)
-            return Status(ErrorCodes::FailedToParse, "Out of range");
+            return Status(FailedToParse, "Out of range");
         *result = d;
         return Status::OK();
     }

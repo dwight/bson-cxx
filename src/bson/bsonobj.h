@@ -26,8 +26,7 @@
 
 namespace _bson {
 
-//    typedef std::set< bsonelement, BSONElementCmpWithoutField > BSONElementSet;
-  //  typedef std::multiset< bsonelement, BSONElementCmpWithoutField > BSONElementMSet;
+    class bsonobjiterator;
 
     /**
        C++ view of a "BSON" object.
