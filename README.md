@@ -17,6 +17,8 @@ to have absolutely no outside dependencies; for example in C++11 we have unique_
 standard library, and that is used herein.  The C++11 specific code is minimal it would be 
 quite easy to make the library work with older C++ editions.
 
+* Endian-awareness has been added, is preliminary, needs testing.
+
 ## Notes for those who have used the MongoDB C++ Driver
 
 * bsonobj behaves differently here. The MongoDB driver version has a build in smart pointer 

@@ -24,11 +24,11 @@ namespace _bson {
             1,  // bool
             8,  // date
             0,  // null
-            -1,  // regex,
-            -1,  // dbref,
-            -1,  // code,
-            -1,  // symbol,
-            -1,  // codewscope,
+            0xff,  // regex,
+            0xff,  // dbref,
+            0xff,  // code,
+            0xff,  // symbol,
+            0xff,  // codewscope,
             4,  // int,
             8,  // timestamp,
             8,  // long = 18
