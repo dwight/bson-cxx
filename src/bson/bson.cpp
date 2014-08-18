@@ -293,10 +293,14 @@ namespace _bson {
             s << fieldName() << ": ";
         switch (type()) {
         case EOO:
+            //  ??
             s << "EOO";
             break;
         case _bson::Date:
-            s << "new Date(" << (long long)date() << ')';
+            //s << "new Date(";
+            s << "{$date: ";
+            s << (long long)date();
+            s << '}';
             break;
         case RegEx: {
             s << "/" << regex() << '/';
@@ -329,10 +333,10 @@ namespace _bson {
             s << "null";
             break;
         case MaxKey:
-            s << "MaxKey";
+            s << "{$maxkey:1}";
             break;
         case MinKey:
-            s << "MinKey";
+            s << "{$minkey:1}";
             break;
         case CodeWScope:
             s << "CodeWScope( "
