@@ -159,6 +159,7 @@ namespace _bson {
          *    this.extractFieldsUnDotted({b : "blah"}) -> {"" : 5}
          *
         */
+        // todo fix retval
         bsonobj extractFieldsUnDotted(const bsonobj& pattern) const;
 
         /** extract items from object which match a pattern object.
@@ -166,8 +167,10 @@ namespace _bson {
             x and y elements of this object, if they are present.
            returns elements with original field names
         */
-        bsonobj extractFields(const bsonobj &pattern , bool fillWithNull=false) const;
+        // todo fix retval
+        bsonobj extractFields(const bsonobj &pattern, bool fillWithNull = false) const;
 
+        // todo fix retval
         bsonobj filterFieldsUndotted(const bsonobj &filter, bool inFilter) const;
 
         bsonelement getFieldUsingIndexNames(const StringData& fieldName,
