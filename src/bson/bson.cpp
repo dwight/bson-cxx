@@ -105,6 +105,12 @@ namespace _bson {
         return sz;
     }
 
+    bsonobjiterator bsonobjbuilder::iterator() const {
+        const char * s = _b.buf() + _offset;
+        const char * e = _b.buf() + _b.len();
+        return bsonobjiterator(s, e);
+    }
+
     inline int bsonelement::size() const {
         if (totalSize >= 0)
             return totalSize;
@@ -444,29 +450,87 @@ namespace _bson {
         }
         s << (isArray ? " ]" : " }");
     }
-    bsonobj bsonobj::getObjectField(const StringData& name) const {
-        bsonelement e = getField(name);
-        BSONType t = e.type();
-        return t == Object || t == Array ? e.object() : bsonobj();
-    }
-    bsonobj::bsonobj() {
-        static char p[] = { /*size*/5, 0, 0, 0, /*eoo*/0 };
-        _objdata = p;
-    }
-    /*bsonelement bsonobj::getField(const StringData& name) const {
-        bsonobjiterator i(*this);
-        while (i.more()) {
-            bsonelement e = i.next();
-            if (name == e.fieldName())
-                return e;
-        }
-        return bsonelement();
-    }*/
 
-    inline bsonobjiterator bsonobjbuilder::iterator() const {
-        const char * s = _b.buf() + _offset;
-        const char * e = _b.buf() + _b.len();
-        return bsonobjiterator(s, e);
+    inline int bsonelement::size(int maxLen) const {
+        if (totalSize >= 0)
+            return totalSize;
+
+        int remain = maxLen - fieldNameSize() - 1;
+
+        int x = 0;
+        switch (type()) {
+        case EOO:
+        case Undefined:
+        case jstNULL:
+        case MaxKey:
+        case MinKey:
+            break;
+        case _bson::Bool:
+            x = 1;
+            break;
+        case NumberInt:
+            x = 4;
+            break;
+        case Timestamp:
+        case _bson::Date:
+        case NumberDouble:
+        case NumberLong:
+            x = 8;
+            break;
+        case jstOID:
+            x = 12;
+            break;
+        case Symbol:
+        case Code:
+        case _bson::String:
+            massert(10313, "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3);
+            x = valuestrsize() + 4;
+            break;
+        case CodeWScope:
+            massert(10314, "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3);
+            x = objsize();
+            break;
+
+        case DBRef:
+            massert(10315, "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3);
+            x = valuestrsize() + 4 + 12;
+            break;
+        case Object:
+        case _bson::Array:
+            massert(10316, "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3);
+            x = objsize();
+            break;
+        case BinData:
+            massert(10317, "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3);
+            x = valuestrsize() + 4 + 1/*subtype*/;
+            break;
+        case RegEx: {
+            const char *p = value();
+            size_t len1 = (maxLen == -1) ? strlen(p) : (size_t)strnlen(p, remain);
+            //massert( 10318 ,  "Invalid regex string", len1 != -1 ); // ERH - 4/28/10 - don't think this does anything
+            p = p + len1 + 1;
+            size_t len2;
+            if (maxLen == -1)
+                len2 = strlen(p);
+            else {
+                size_t x = remain - len1 - 1;
+                verify(x <= 0x7fffffff);
+                len2 = strnlen(p, (int)x);
+            }
+            //massert( 10319 ,  "Invalid regex options string", len2 != -1 ); // ERH - 4/28/10 - don't think this does anything
+            x = (int)(len1 + 1 + len2 + 1);
+        }
+            break;
+        default: {
+            StringBuilder ss;
+            ss << "bsonelement: bad type " << (int)type();
+            std::string msg = ss.str();
+            massert(13655, msg.c_str(), false);
+        }
+        }
+        totalSize = x + fieldNameSize() + 1; // BSONType
+
+        return totalSize;
     }
 
     bsonobjbuilder& bsonobjbuilder::appendElementsUnique(bsonobj x) {
@@ -487,5 +551,120 @@ namespace _bson {
         return *this;
     }
 
+    /* must be same type when called, unless both sides are #s
+    this large function is in header to facilitate inline-only use of bson
+    */
+    inline int compareElementValues(const bsonelement& l, const bsonelement& r) {
+        int f;
+
+        switch (l.type()) {
+        case EOO:
+        case Undefined: // EOO and Undefined are same canonicalType
+        case jstNULL:
+        case MaxKey:
+        case MinKey:
+            f = l.canonicalType() - r.canonicalType();
+            if (f<0) return -1;
+            return f == 0 ? 0 : 1;
+        case Bool:
+            return *l.value() - *r.value();
+        case Timestamp:
+            // unsigned compare for timestamps - note they are not really dates but (ordinal + time_t)
+            if (l.date() < r.date())
+                return -1;
+            return l.date() == r.date() ? 0 : 1;
+        case Date:
+        {
+            long long a = (long long)l.Date().millis;
+            long long b = (long long)r.Date().millis;
+            if (a < b)
+                return -1;
+            return a == b ? 0 : 1;
+        }
+        case NumberLong:
+            if (r.type() == NumberLong) {
+                long long L = l._numberLong();
+                long long R = r._numberLong();
+                if (L < R) return -1;
+                if (L == R) return 0;
+                return 1;
+            }
+            goto dodouble;
+        case NumberInt:
+            if (r.type() == NumberInt) {
+                int L = l._numberInt();
+                int R = r._numberInt();
+                if (L < R) return -1;
+                return L == R ? 0 : 1;
+            }
+            // else fall through
+        case NumberDouble:
+        dodouble :
+        {
+            double left = l.number();
+            double right = r.number();
+            if (left < right)
+                return -1;
+            if (left == right)
+                return 0;
+            if (isNaN(left))
+                return isNaN(right) ? 0 : -1;
+            return 1;
+        }
+        case jstOID:
+            return memcmp(l.value(), r.value(), 12);
+        case Code:
+        case Symbol:
+        case String:
+            /* todo: a utf sort order version one day... */
+        {
+            // we use memcmp as we allow zeros in UTF8 strings
+            int lsz = l.valuestrsize();
+            int rsz = r.valuestrsize();
+            int common = std::min(lsz, rsz);
+            int res = memcmp(l.valuestr(), r.valuestr(), common);
+            if (res)
+                return res;
+            // longer string is the greater one
+            return lsz - rsz;
+        }
+        case Object:
+        case Array:
+            return l.object().woCompare(r.object());
+        case DBRef: {
+            int lsz = l.valuesize();
+            int rsz = r.valuesize();
+            if (lsz - rsz != 0) return lsz - rsz;
+            return memcmp(l.value(), r.value(), lsz);
+        }
+        case BinData: {
+            int lsz = l.objsize(); // our bin data size in bytes, not including the subtype byte
+            int rsz = r.objsize();
+            if (lsz - rsz != 0) return lsz - rsz;
+            return memcmp(l.value() + 4, r.value() + 4, lsz + 1 /*+1 for subtype byte*/);
+        }
+        case RegEx: {
+            int c = strcmp(l.regex(), r.regex());
+            if (c)
+                return c;
+            return strcmp(l.regexFlags(), r.regexFlags());
+        }
+        case CodeWScope: {
+            f = l.canonicalType() - r.canonicalType();
+            if (f)
+                return f;
+            f = strcmp(l.codeWScopeCode(), r.codeWScopeCode());
+            if (f)
+                return f;
+            f = strcmp(l.codeWScopeScopeDataUnsafe(), r.codeWScopeScopeDataUnsafe());
+            if (f)
+                return f;
+            return 0;
+        }
+        default:
+            verify(false);
+        }
+        return -1;
+    }
 
 }
