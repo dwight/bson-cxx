@@ -83,7 +83,6 @@ namespace _bson {
     }
 
     int bsonelement::_valuesize() const { 
-       // const char *p = valueStart;
         unsigned char tp = (unsigned char)type();
         unsigned z = iter::sizeForBsonType[tp ];
         unsigned sz = 0;
@@ -119,7 +118,7 @@ namespace _bson {
         return totalSize;
     }
 
-    inline int bsonelement::sizeOld() const {
+    int bsonelement::sizeOld() const {
         if (totalSize >= 0)
             return totalSize;
 
@@ -233,7 +232,6 @@ namespace _bson {
         q(log() << "returning BSONElement() (mismatch)" << endl;)
         return bsonelement();
     }
-
 
     const string bsonobjbuilder::numStrs[] = {
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -451,7 +449,8 @@ namespace _bson {
         s << (isArray ? " ]" : " }");
     }
 
-    inline int bsonelement::size(int maxLen) const {
+    // version with bound checking (maxLen param)
+    int bsonelement::size(int maxLen) const {
         if (totalSize >= 0)
             return totalSize;
 
