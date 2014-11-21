@@ -972,8 +972,6 @@ namespace _bson {
         // we know ahead of time where the number ends, which is not currently the case.
         string s = get("0123456789-+Ee.");
 
-	cerr << "jparse number got:" << s << endl;
-
         if (s.empty()) {
             return parseError("Bad characters in expected numeric value");
         }
@@ -981,7 +979,6 @@ namespace _bson {
         // reset errno to make sure that we are getting it from strtod
         errno = 0;
         retd = strtod(s.c_str(), NULL);
-	cerr << "retd:" << retd << endl;
         if (errno == ERANGE) {
             return parseError("Value cannot fit in double");
         }
