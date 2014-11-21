@@ -12,7 +12,7 @@ removed just for simplicity.  Other changes have been made along the way too.
 that one day there will be an official bson driver perhaps, and we don't want to collide
 with that name-wise.
 
-* In current form the code uses a touch of C++11 things. The main reason for this is simply 
+* In current form the code uses a touch of C++11. The main reason for this is simply 
 to have absolutely no outside dependencies; for example in C++11 we have unique_ptr in the 
 standard library, and that is used herein.  The C++11 specific code is minimal it would be 
 quite easy to make the library work with older C++ editions.
@@ -38,3 +38,8 @@ Apache 2.0.
 As mentioned above, the library uses `std::unique_ptr` among other things. Thus, use `-std=c++0x` on the compiler command line. (If that doesn't work for your project, I'd recommend using the BSON implementation in the MongoDB C++ driver instead.)
 
 For Windows, see `build/example1/example1.vcxproj` for an example of settings that work.  (Tested on Visual Studio 2013.)
+
+## See Also
+
+The [bsontools](https://github.com/dwight/bsontools) command line utilities project which uses this library.  Likely useful for any BSON user regardless of language.
+
