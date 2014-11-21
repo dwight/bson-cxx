@@ -966,26 +966,36 @@ namespace _bson {
     }
 
     Status JParse::number(const StringData& fieldName, bsonobjbuilder& builder) {
-        long long retll;
         double retd;
+
+        // note: We should use parseNumberFromString here, but that function requires that
+        // we know ahead of time where the number ends, which is not currently the case.
+        string s = get("0123456789-+Ee.");
+
+	cerr << "jparse number got:" << s << endl;
+
+        if (s.empty()) {
+            return parseError("Bad characters in expected numeric value");
+        }
 
         // reset errno to make sure that we are getting it from strtod
         errno = 0;
-        // SERVER-11920: We should use parseNumberFromString here, but that function requires that
-        // we know ahead of time where the number ends, which is not currently the case.
-        string s = get("0123456789-+Ee.");
-        if (s.empty()) {
-            return parseError("Bad characters in value");
-        }
         retd = strtod(s.c_str(), NULL);
+	cerr << "retd:" << retd << endl;
         if (errno == ERANGE) {
             return parseError("Value cannot fit in double");
         }
+
+	if( s.find_first_of(".Ee") != std::string::npos ) {
+            builder.append(fieldName, retd);
+	    return Status::OK();
+	}
+
         // reset errno to make sure that we are getting it from strtoll
         errno = 0;
         // SERVER-11920: We should use parseNumberFromString here, but that function requires that
         // we know ahead of time where the number ends, which is not currently the case.
-        retll = strtoll(s.c_str(), NULL, 10);
+        long long retll = strtoll(s.c_str(), NULL, 10);
         if (errno == ERANGE) {
             // The number either had characters only meaningful for a double or
             // could not fit in a 64 bit int
