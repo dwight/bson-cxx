@@ -18,6 +18,7 @@
 #include <set>
 #include <list>
 #include <string>
+#include <string>
 #include <vector>
 #include "bsonelement.h"
 #include "string_data.h"
@@ -393,6 +394,14 @@ namespace _bson {
         // Don't add anything other than forwarding constructors!!!
         BSONArray(): bsonobj() {}
         explicit BSONArray(const bsonobj& obj): bsonobj(obj) {}
+    };
+
+
+    class bsonobjholder {
+        std::string buf;
+    public:
+        bsonobjholder(bsonobj& o) : buf(o.objdata(), o.objsize()) { }
+        bsonobj obj() const { return bsonobj(buf.c_str()); }
     };
 
 }

@@ -132,7 +132,16 @@ namespace _bson {
         }
 
         /** add header for a new subarray and return bufbuilder for writing to
-        the subarray's body */
+            the subarray's body 
+        
+            e.g.:
+              BufBuilder& sub = b.subarrayStart("myArray");
+              sub.append( "0", "hi" );
+              sub.append( "1", "there" );
+              sub.append( "2", 33 );
+              sub._done();
+
+        */
         BufBuilder &subarrayStart(const StringData& fieldName) {
             _b.appendNum((char)Array);
             _b.appendStr(fieldName);
