@@ -983,10 +983,11 @@ namespace _bson {
             return parseError("Value cannot fit in double");
         }
 
-	if( s.find_first_of(".Ee") != std::string::npos ) {
+        if (s.find_first_of(".Ee") != std::string::npos) {
+            // double
             builder.append(fieldName, retd);
-	    return Status::OK();
-	}
+            return Status::OK();
+        }
 
         // reset errno to make sure that we are getting it from strtoll
         errno = 0;

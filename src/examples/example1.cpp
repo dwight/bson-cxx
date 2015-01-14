@@ -1,5 +1,7 @@
 /* 
     g++ example1.cpp ../bson/json.cpp ../bson/bson.cpp ../bson/time_support.cpp ../bson/parse_number.cpp  ../bson/base64.cpp 
+
+    vstudio: see build/examples/examples.sln
  */
 
 #include <iostream>
@@ -19,7 +21,7 @@ void go1() {
 }
 
 void go2() { 
-    // example of using bsonobjbuilder and of nesting
+    // example of using bsonobjbuilder and of nesting documents
     bsonobjbuilder b;
     b.append("x", 3.14);
     b.append("y", true);
@@ -29,11 +31,11 @@ void go2() {
     bsonobj o = a.obj();
     cout << o.toString() << endl;
 
-    // reading bson object field example
-    cout << o["x"].Int() << endl;
+    // reading value of the "x" field from the bson object 
+    cout << "x: " << o["x"].Int() << endl;
 
     // "dot notation" example
-    cout << o.getFieldDotted("yy.y").Bool() << endl;
+    cout << "yy.y: " << o.getFieldDotted("yy.y").Bool() << endl;
 }
 
 void go() { 
