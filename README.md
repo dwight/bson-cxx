@@ -39,6 +39,10 @@ As mentioned above, the library uses `std::unique_ptr` among other things. Thus,
 
 For Windows, see `build/example1/example1.vcxproj` for an example of settings that work.  (Tested on Visual Studio 2013.)
 
+## Support
+
+* [https://groups.google.com/forum/#!forum/bson]
+
 ## See Also
 
 The [bsontools](https://github.com/dwight/bsontools) command line utilities project which uses this library.  Likely useful for any BSON user regardless of language.
