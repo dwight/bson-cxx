@@ -302,7 +302,7 @@ namespace _bson {
     std::vector<bsonelement> bsonelement::Array() const {
         chk(_bson::Array);
         std::vector<bsonelement> v;
-        bsonobjiterator i(Obj());
+        bsonobjiterator i(object());
         while( i.more() ) {
             bsonelement e = i.next();
             const char *f = e.fieldName();
@@ -729,6 +729,7 @@ namespace _bson {
         return b.obj();
     }*/
 
+#if 0
     bool bsonobjbuilder::appendAsNumber( const StringData& fieldName , const string& data ) {
         if ( data.size() == 0 || data == "-" || data == ".")
             return false;
@@ -773,6 +774,7 @@ namespace _bson {
             return false;
         }
     }
+#endif
 
     /* take a BSONType and return the name of that type as a char* */
     const char* typeName (BSONType type) {

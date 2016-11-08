@@ -88,7 +88,8 @@ namespace _bson {
             returned bsonobj if you need your own copy.
             throws UserException if the element is not of type object.
         */
-        bsonobj Obj()               const;
+        bsonobj object() const;
+        //bsonobj Obj() const;
 
         /** populate v with the value of the element.  If type does not match, throw exception.
             useful in templates -- see also bsonobj::Vals().
@@ -305,9 +306,6 @@ namespace _bson {
         const char * codeWScopeScopeData() const {
             return codeWScopeCode() + codeWScopeCodeLen();
         }
-
-        /** Get the embedded object this element holds. */
-        bsonobj object() const;
 
         /* uasserts if not an object */
         bsonobj embeddedObjectUserCheck() const;
