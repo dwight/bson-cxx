@@ -44,13 +44,16 @@ namespace _bson {
          update $push (append) operation
          various db.eval() type operations
     */
-    const int BSONObjMaxUserSize = 16 * 1024 * 1024;
+#ifndef MAX_BSON_PACKET_SIZE
+#define MAX_BSON_PACKET_SIZE 16 * 1024 * 1024
+#endif
+	const unsigned int BSONObjMaxUserSize = MAX_BSON_PACKET_SIZE;
 
     /*
        Sometimes we need objects slightly larger - an object in the replication local.oplog
        is slightly larger than a user object for example.
     */
-    const int BSONObjMaxInternalSize = BSONObjMaxUserSize + ( 16 * 1024 );
+    const unsigned int BSONObjMaxInternalSize = BSONObjMaxUserSize + ( 16 * 1024 );
 
     const int BufferMaxSize = 64 * 1024 * 1024;
 
