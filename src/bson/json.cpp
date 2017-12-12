@@ -1032,6 +1032,13 @@ namespace _bson {
             if (eof()) {
                 return parseError("Field name expected");
             }
+			//well formated json's fieldname started after space("\t" or " " or "\r\n")
+			//so we must try to find "\"" again
+			if (peekToken(DOUBLEQUOTE) || peekToken(SINGLEQUOTE)) {
+				// Quoted key
+				// TODO: make sure quoted field names cannot contain null characters
+				return quotedString(result);
+			}
             if (!match(peek(), ALPHA "_$")) {
                 return parseError("First character in field must be [A-Za-z$_]");
             }
